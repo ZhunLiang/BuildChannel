@@ -92,7 +92,7 @@ sub StrPara{
   return $out;
 }
 
-system "/opt/python/bin/python GetMSDpara.py";
+system "PYTHON GetMSDpara.py";
 @MoleName = GetMSD("NAME");
 @MoleMass = GetMSD("MASS");
 @MoleNum = GetMSD("NUM");
@@ -121,16 +121,16 @@ system "editconf -f temp_out.gro -scale @ScaleSize[0] @ScaleSize[1] @ScaleSize[2
 @NewGroXYZ=split/\s+/, `tail -1 tempLeft.gro`; #Get the scaled box size: X, Y, Z
 system "rm -f temp_out.gro";
 #Get the scaled gro, the x,y,z is %.3f format
-system "/opt/python/bin/python GetZmax.py -i tempLeft.gro > LPyOut";
+system "PYTHON GetZmax.py -i tempLeft.gro > LPyOut";
 @ZLMaxMin= split/\s+/,`cat LPyOut`; #Get the LeftGro Zmax[0] and Zmin[1]
 system "editconf -f tempLeft.gro -scale 1 1 -1 -o tempRight.gro";
-system "/opt/python/bin/python GetZmax.py -i tempRight.gro > RPyOut";
+system "PYTHON GetZmax.py -i tempRight.gro > RPyOut";
 @ZRMaxMin=split/\s+/,`cat RPyOut`; #Get the RightGro Zmax[0] and Zmin[1]
 $Ztrans=@ZLMaxMin[0]-@ZRMaxMin[1]+$ChannelLong; 
 system "editconf -f tempRight.gro -translate 0 0 $Ztrans -o tempRightT.gro";
 #Translate the left gro as right gro
 @NewGroXYZ[3]=$TotalZLong;
-system "/opt/python/bin/python CombineGro.py -l tempLeft.gro -r tempRightT.gro -n $channel_name -x @NewGroXYZ[1] -y @NewGroXYZ[2] -z @NewGroXYZ[3] -o output_temp1.gro";
+system "PYTHON CombineGro.py -l tempLeft.gro -r tempRightT.gro -n $channel_name -x @NewGroXYZ[1] -y @NewGroXYZ[2] -z @NewGroXYZ[3] -o output_temp1.gro";
 #Combine these two gro as one total gro
 system "editconf -f output_temp1.gro -c -o $Channel_gro";
 @SingleWallNum=GetTopNum($Wall_top);
