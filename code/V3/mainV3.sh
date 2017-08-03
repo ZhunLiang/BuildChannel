@@ -4,18 +4,15 @@
 $ChannelLong=8;
 $TotalZLong=30;
 @ScaleSize= (0,0,1);
-$FirstAtomNum=19; #the fisrt mole type of IonFile atom number
-$SecondAtomNum=15; # teh second
-@MoleName=("TiC","Emi","f2N"); #molecular name corresponding top file and gro file.
 
 
-$file="SingleWall.gro";
-$channel_topfile="SingleWall.top";
-$IonFile="Ion.gro"; #bulk npt equilibrated at same temperature with wanted channel temperature.
-$IonTop="Ion.top"; # the ion gro file corresponding top file
+$Wall_gro="SingleWall.gro";
+$Wall_top="SingleWall.top";
+$Ion_gro="Ion.gro"; #bulk npt equilibrated at same temperature with wanted channel temperature.
+$Ion_top="Ion.top"; # the ion gro file corresponding top file
 $OutWallTop="Wall.top";
 $OutPutChannel="Channel.gro";
-$channel_grofile="Channel_temp.gro";
+$Channel_gro="Channel_temp.gro";
 $channel_name="MILTIION";
 $scale_size=100; #scale size means the decimal point number, 100 means %.2f, 1000 means %.3f
 $Kmax=1.1; #the maxmiun density of channel ion compare with bulk
@@ -34,7 +31,7 @@ sub GetMSD{
 
 sub GetTopNum{
   my $count = 0;
-  my $temp,@temp2,@Out;
+  my ($temp,@temp2,@Out);
   for(my $i=0;$i<$TotalNum;$i+=1){
     $temp = `grep -w @MoleName[$i] $_[0]`;
     if($temp){
@@ -46,14 +43,63 @@ sub GetTopNum{
   return @Out;
 }
 
+sub ChangeTop{
+  my $temp;
+  my (@temp_all,$temp_name,$temp_num);
+  my ($temp_re,$temp_match);
+  system "cp @_[0] @_[1]";
+  for(my $i=0;$i<$TotalNum;$i+=1){
+    $temp = `grep -w @MoleName[$i] @_[1]`;
+    if($temp){
+      @temp_all = split/\s+/,$temp;
+      $temp_name = @temp_all[0];
+      $temp_num = @temp_all[1]*@_[3]*@_[4]*@_[5]*@_[2];
+      $temp_match = "$temp_name\\s\\+\\([0-9]\\+\\)";
+      $temp_re = "$temp_name\\t$temp_num";
+      #print "$temp_match\n$temp_re\n";
+      system "sed -i 's/$temp_match/$temp_re/g' @_[1]";
+    }
+  }
+}
+
+sub GetTopMSD{
+  my $temp;
+  my $count = 0;
+  my $i;
+  my (@temp,@Name_Out,@Num_Out,@Mass_Out,@Top_Num);
+  for($i=0;$i<$TotalNum;$i+=1){
+    $temp = `grep -w @MoleName[$i] $_[0]`;
+	if($temp){
+	  @Name_Out[$count] = @MoleName[$i];
+	  @Num_Out[$count] = @MoleNum[$i];
+	  @Mass_Out[$count] = @MoleMass[$i];
+          @temp=split/\s+/,$temp;
+          @Top_Num[$count] = @temp[1];
+	  $count += 1;
+	}
+  }
+  return \@Name_Out,\@Num_Out,\@Mass_Out,\@Top_Num;
+}
+
+sub StrPara{
+  my $temp="";
+  my $n=@_;
+  for(my $i=0;$i<$n;$i+=1){
+    $temp="$temp @_[$i]";
+  }
+  my $pre='"';
+  my $out="$pre$temp$pre";
+  return $out;
+}
+
 system "/opt/python/bin/python GetMSDpara.py";
 @MoleName = GetMSD("NAME");
 @MoleMass = GetMSD("MASS");
 @MoleNum = GetMSD("NUM");
 $TotalNum = @MoleName;
-
+system "rm -f MSD_out.dat";
 #
-@GroXYZ= split/\s+/,`tail -1 $file`; #GroXYZ[1] [2] [3] is X, Y, Z
+@GroXYZ= split/\s+/,`tail -1 $Wall_gro`; #GroXYZ[1] [2] [3] is X, Y, Z
 #Get the Input gri box size: X, Y, Z
 for ($i=0; $i<3; $i=$i+1){
     $temp = @WantedXYZ[$i]/@GroXYZ[$i+1];
@@ -63,7 +109,7 @@ for ($i=0; $i<3; $i=$i+1){
     }
 }
 #Get the needed nbox number
-system "genconf -f $file -nbox @GroNum[0] @GroNum[1] @GroNum[2] -o temp_out.gro";
+system "genconf -f $Wall_gro -nbox @GroNum[0] @GroNum[1] @GroNum[2] -o temp_out.gro";
 @TempXYZ= split/\s+/, `tail -1 temp_out.gro`; #[1],[2],[3] is X,Y,Z
 for ($i=0; $i<2; $i=$i+1){
     $temp=@TempXYZ[$i+1]*$scale_size;
@@ -86,56 +132,10 @@ system "editconf -f tempRight.gro -translate 0 0 $Ztrans -o tempRightT.gro";
 @NewGroXYZ[3]=$TotalZLong;
 system "/opt/python/bin/python CombineGro.py -l tempLeft.gro -r tempRightT.gro -n $channel_name -x @NewGroXYZ[1] -y @NewGroXYZ[2] -z @NewGroXYZ[3] -o output_temp1.gro";
 #Combine these two gro as one total gro
-system "editconf -f output_temp1.gro -c -o $channel_grofile";
-@SingleWallNum=GetTopNum($channel_topfile);
-print "SingleWallNum: @SingleWallNum\n";
-$NewWallNum=@SingleWallNum[0]*@GroNum[0]*@GroNum[1]*@GroNum[2]*2;
-print "NewWallNum: $NewWallNum\n";
-$match="@MoleName[0]\\s\\+\\([0-9]\\+\\)";
-$replace="@MoleName[0]\\t$NewWallNum";
-#print "$NewWallNum\t$match\t$replace\n";
+system "editconf -f output_temp1.gro -c -o $Channel_gro";
+@SingleWallNum=GetTopNum($Wall_top);
+ChangeTop($Wall_top,$OutWallTop,2,@GroNum);
 system "rm -f tempLeft.gro tempRight.gro LPyOut RPyOut tempRightT.gro output_temp1.gro";
-system "sed 's/$match/$replace/g' $channel_topfile > $OutWallTop";
-#
-##The next is to scale given IonFile(gro) to copy the coordinate to channel.
-#@IonBoxXYZ=split/\s+/,`tail -1 $IonFile`;
-#for ($i=0;$i<3;$i=$i+1){
-#    if ($i<2){
-#        @IdeaScaleSize[$i]=@NewGroXYZ[$i+1]/@IonBoxXYZ[$i+1];
-#    }
-#    else{
-#        @IdeaScaleSize[$i]=$ChannelLong/@IonBoxXYZ[$i+1];
-#    }
-#   # print "@IdeaScaleSize[$i] \n";
-#}
-#$NewGroIonV=@NewGroXYZ[1]*@NewGroXYZ[2]*($ChannelLong-0.2); #0.2 means the surface 0.1 nm each side don't have ion
-#$IonV=@IonBoxXYZ[1]*@IonBoxXYZ[2]*@IonBoxXYZ[3];
-#@IonPairNum=split/\s+/,`tail -1 $IonTop`;
-#system "perl tune_bulk.sh $NewGroIonV $IonV $Kmax $Kmin @IonPairNum[1] > Tune_Out";
-#$DeletPairNum=int(`cat Tune_Out`);
-##print "$NewIonPair \n";
-#system "rm Tune_Out";
-#if($DeletPairNum!=0){
-#     $tune_gro="tune.gro";
-#     $tune_top="tune.top";
-#     system "/opt/python/bin/python DelMole.py -i $IonFile -F $FirstAtomNum -S $SecondAtomNum -n @IonPairNum[1] -d $DeletPairNum -o $tune_gro";
-#     $temp=@IonPairNum[1]-$DeletPairNum;
-#     system "cp $IonTop $tune_top";
-#     system "sed -i 's/@IonPairNum[1]/$temp/g' $tune_top";
-#     system "mkdir tune_bulk; cp *.itp tune_npt.mdp tune_bulk/; mv $tune_gro $tune_top tune_bulk/";
-#     system "cd tune_bulk/; grompp -f tune_npt.mdp -c $tune_gro -p $tune_top -o tune.tpr; mdrun -s tune.tpr -v -deffnm tune_end -pin on";
-#     system "mv tune_bulk/tune_end.gro ./;cp tune_bulk/$tune_top ./tune_end.top; rm -rf tune_bulk";
-#}
-##
-#system "perl scale_bulk.sh $channel_grofile tune_end.gro $ChannelLong tune_end.top $FirstAtomNum $SecondAtomNum";
-###above output: IonChannel.gro and IonChannel.top
-##The Next is to copy the channel ion to electrode gro
-#@IonChannelXYZ=split/\s+/,`tail -1 IonChannel.gro`;
-#@IonTrans[0]=(@NewGroXYZ[1]-@IonChannelXYZ[1])/2;
-#@IonTrans[1]=(@NewGroXYZ[2]-@IonChannelXYZ[2])/2;
-#@IonTrans[2]=$TotalZLong/2-$ChannelLong/2+($ChannelLong-@IonChannelXYZ[3])/2;
-#system "editconf -f IonChannel.gro -translate @IonTrans[0] @IonTrans[1] @IonTrans[2] -o IonTemp.gro";
-#system "/opt/python/bin/python CombineGro.py -l $channel_grofile -r IonTemp.gro -n EminTf2N_Ti3C2 -x @NewGroXYZ[1] -y @NewGroXYZ[2] -z @NewGroXYZ[3] -o $OutPutChannel";
-#system "rm -f IonTemp.gro";
-##print "@IonTrans[2] \n";
-#system "rm -f IonChannel.gro $channel_grofile";
+($Top_Name,$Top_Num,$Top_Mass,$Top_top) = GetTopMSD($Ion_top);
+@Top_Name=@$Top_Name;@Top_Num=@$Top_Num;@Top_Mass=@$Top_Mass;@Top_top=@$Top_top;
+
