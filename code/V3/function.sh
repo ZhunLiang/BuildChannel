@@ -74,5 +74,16 @@ sub TChangeTop{
   }
 }
 
+sub CombineTop{
+  my $Num = @_;
+  my $i,$j;
+  system "cp @_[1] $_[0]";
+  for($i=2;$i<$Num;$i+=1){
+    for($j=0;$j<$TotalNum;$j+=1){
+       `grep -w @MoleName[$j] @_[$i] >> @_[0]`;
+    }
+  }
+}
+
 1;
 

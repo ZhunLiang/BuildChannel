@@ -10,13 +10,29 @@ $Wall_gro="SingleWall.gro";
 $Wall_top="SingleWall.top";
 $Ion_gro="Ion.gro"; #bulk npt equilibrated at same temperature with wanted channel temperature.
 $Ion_top="Ion.top"; # the ion gro file corresponding top file
-$OutWallTop="Wall.top";
-$OutPutChannel="Channel.gro";
-$Channel_gro="Channel_temp.gro";
+$WallTop="Wall.top";
+$WallGro="Wall.gro";
+$OutGro="Channel.gro";
+$OutTop="Channel.top";
 $channel_name="MILTIION";
 $scale_size=100; #scale size means the decimal point number, 100 means %.2f, 1000 means %.3f
 $Kmax=1.1; #the maxmiun density of channel ion compare with bulk
 $Kmin=1.02; #the mimnium density of channel ion compare with bulk
+
+###############Control Parameter###########################
+#control build_eletrode.sh
+$BUILDELE=1;
+#control tune_ion.sh
+$DELETE=1;
+$RUN=1;
+#control scale_ion.sh
+$RUNSCALE=1;
+$RUNBUILD=1;
+#control combine.sh
+$GRO=1;
+$TOP=1;
+$DEL=1;
+$SAVETEMP=1;
 
 ###############Initial#################
 $Python = "\\/opt\\/python\\/bin\\/python";
@@ -38,20 +54,23 @@ sub GetMSD{
 }
 
 ##############GetPara############################
-require('getpara.sh');
+require('pretreat.sh');
 
 ###############Load Function################################
 require('function.sh');
 
 ################Build electrode#############################
-#require('build_electrode.sh');
+require('build_electrode.sh');
 
 ################Tune Bulk Ion gro###########################
-#require('tune_ion.sh');
+require('tune_ion.sh');
 
 ################Scale Bulk Ion gro#########################
 require('scale_ion.sh');
-#Our @TuneNumXYZ\n
+
+################Combine gro and top. Delete files#######################
+require('combine.sh');
+
 ################Back#####################
 foreach $sh_files(@sh_files){
   system "sed -i 's/$Python/PYTHON/g' $sh_files";
