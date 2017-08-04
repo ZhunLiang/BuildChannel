@@ -44,10 +44,13 @@ require('getpara.sh');
 require('function.sh');
 
 ################Build electrode#############################
-require('build_electrode.sh');
+#require('build_electrode.sh');
 
 ################Tune Bulk Ion gro###########################
-require('tune_bulk.sh');
+#require('tune_ion.sh');
+
+################Scale Bulk Ion gro#########################
+require('scale_ion.sh');
 
 ################Back#####################
 foreach $sh_files(@sh_files){
