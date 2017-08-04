@@ -28,8 +28,7 @@ if($Err!=0){
 $TuneTotalNum=@TuneNumXYZ[0]*@TuneNumXYZ[1]*@TuneNumXYZ[2];
 
 for($i=0;$i<3;$i=$i+1){
-    if($i==2){@ScaleXYZ[$i]=(@ChannelXYZ[$i+1]-0.7)/@TuneNumXYZ[$i];}
-    else{@ScaleXYZ[$i]=(@ChannelXYZ[$i+1]-0.3)/@TuneNumXYZ[$i];}
+    @ScaleXYZ[$i]=(@ChannelXYZ[$i+1]-0.2)/@TuneNumXYZ[$i];
     @ScaleRatio[$i]=@ScaleXYZ[$i]/@IonXYZ[$i+1];
 }
 for($i=0;$i<3;$i=$i+1){
@@ -65,11 +64,7 @@ if($RUNSCALE==1){
   system "cp tune_end.top scale/scale.top;cp tune_end.gro scale/scale.gro";
   chdir "scale/";
   for($i=0;$i<$MaxTime;$i=$i+1){    
-    system "editconf -f scale.gro -scale @ScaleValue[0+$i] @ScaleValue[$MaxTime+$i] @ScaleValue[$MaxTime*2+$i] -o scale_start.gro";
-    ####!!!!!!!!ATENSTION!!!!!!!!THE NEXT TWO LINE MAYBY WRONG !!!!##### 
-    system "grompp -f scale-nvt.mdp -c scale_start.gro -p scale.top -o scale.tpr";
-    system "mdrun -s scale.tpr -v -deffnm scale_end -ntmpi 32 ";
-    system "echo 0 | trjconv -s scale.tpr -f scale_end.gro -pbc mol -o scale.gro";
+    RunScale("scale.gro","scale.top",@ScaleValue[0+$i],@ScaleValue[$MaxTime+$i],@ScaleValue[$MaxTime*2+$i]);
   }
   system "cp scale.gro scale.top ../";
   chdir "../";
@@ -89,12 +84,14 @@ if($RUNBUILD==1){
     system "mkdir build_ion/";
     system "cp *.itp IonChannel*.gro IonChannel.top scale-nvt.mdp build_ion/";
     chdir "build_ion/";
-    system "grompp -f scale-nvt.mdp -c IonChannel.gro -p IonChannel.top -o IonMulti.tpr";
-    system "mdrun -s IonMulti.tpr -v -deffnm IonChannel_end -ntmpi 32";	
-    system "echo 0 | trjconv -f IonChannel_end.gro -s IonMulti.tpr -pbc mol -o IonChannel.gro";
-    system "mv IonChannel.gro ../; mv IonChannel.top ../";
+    RunScale("IonChannel.gro","IonChannel.top",1,1,1);
+    RunScale("IonChannel.gro","IonChannel.top",0.97,0.97,0.95);
+    RunScale("IonChannel.gro","IonChannel.top",0.97,0.97,0.95);
+    system "mv IonChannel.gro ../;mv IonChannel.top ../";
     chdir "../";
     system "rm -rf build_ion/";
 }
+
+
 
 1;

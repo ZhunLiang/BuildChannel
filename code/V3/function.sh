@@ -85,5 +85,13 @@ sub CombineTop{
   }
 }
 
+sub RunScale{
+  system "editconf -f $_[0] -scale $_[2] $_[3] $_[4] -o $_[0]";
+  ####!!!!!!!!ATENSTION!!!!!!!!THE NEXT TWO LINE MAYBY WRONG !!!!#####
+  system "grompp -f scale-nvt.mdp -c $_[0] -p $_[1] -o run.tpr";
+  system "mdrun -s run.tpr -v -deffnm run -ntmpi 32 ";
+  system "echo 0 | trjconv -s run.tpr -f run.gro -pbc mol -o $_[0]";
+}
+
 1;
 
