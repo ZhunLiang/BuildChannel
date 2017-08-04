@@ -51,7 +51,7 @@ require('function.sh');
 
 ################Scale Bulk Ion gro#########################
 require('scale_ion.sh');
-print "@TuneNumXYZ\n";
+#Our @TuneNumXYZ\n
 ################Back#####################
 foreach $sh_files(@sh_files){
   system "sed -i 's/$Python/PYTHON/g' $sh_files";
