@@ -7,7 +7,7 @@ my $tune_gro="tune.gro";
 my $tune_top="tune.top";
 
 my $Tnum1 = $NewGroIonV/$IonV;
-my $Tnum2 = int($num1)+1;
+my $Tnum2 = int($Tnum1)+1;
 my $Tnum3;
 if($Tnum2<=$Tnum1*$Kmin){
   $Tnum3=$NewGroIonV*($Kmin+($Kmax-$Kmin)/2)/($Tnum2+1);

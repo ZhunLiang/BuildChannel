@@ -7,7 +7,7 @@ my $tune_gro="tune.gro";
 my $tune_top="tune.top";
 
 my $Tnum1 = $NewGroIonV/$IonV;
-my $Tnum2 = int($num1)+1;
+my $Tnum2 = int($Tnum1)+1;
 my $Tnum3;
 if($Tnum2<=$Tnum1*$Kmin){
   $Tnum3=$NewGroIonV*($Kmin+($Kmax-$Kmin)/2)/($Tnum2+1);
@@ -39,7 +39,7 @@ if($RUN==1){
   system "mkdir tune_bulk; cp *.itp tune_npt.mdp tune_bulk/; mv $tune_gro tune_bulk/;mv $tune_top tune_bulk/";
   chdir "tune_bulk/";
   system "GROMACSgrompp -f tune_npt.mdp -c $tune_gro -p $tune_top -o tune.tpr";
-  system "GROMACSmdrun -s tune.tpr -v -deffnm tune_run";
+  system "GROMACSmdrun -s tune.tpr -v -deffnm tune_run -ntmpi 16";
   #system "mv tune_run.gro tune_end.gro";
   system "echo 0 | GROMACStrjconv -f tune_run.gro -s tune.tpr -pbc mol -o tune_end.gro";
   system "mv tune_end.gro ../;mv $tune_top ../tune_end.top";
