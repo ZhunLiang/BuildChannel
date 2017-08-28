@@ -8,12 +8,12 @@
 #@Dir2_b=("Ti3C2");
 #@Dir3=("NoRotate","Rotate_X","Rotate_XY");
 @Dir3=("Rotate_X","Rotate_XY");
-#@Dir3=("Rotate_X");
+#@Dir3=("Rotate_XY");
 $XYZ="5_5_4";
 $TLong="12";
 $Delete="1_1";
 $Dir_code=`pwd`;
-
+chomp($Dir_code);
 
 $NDir1=@Dir1;$NDir2_a=@Dir2_a;$NDir2_b=@Dir2_b;$NDir3=@Dir3;
 #print "@Dir1\n@Dir2_a\n@Dir2_b\n@Dir3\n";
@@ -38,6 +38,7 @@ for($a=0;$a<$NDir1;$a+=1){
     }
   }
 }
+
 for($i=0;$i<$TDir;$i+=1){
   system "cp *.sh *.py *.pl *.mdp @Prex[$i]";
   chdir @Prex[$i];
@@ -45,5 +46,3 @@ for($i=0;$i<$TDir;$i+=1){
   system "rm -f bash.sh bash_multi.sh main.pl pretreat.sh function.sh build_electrode.sh tune_ion.sh scale_ion.sh combine.sh CalDelNum.py CombineGro.py DelMole3.py GetMSDpara.py GetZmax.py SortMole.py scale-nvt.mdp tune_npt.mdp";  
   chdir $Dir_code;
 }
-
-
