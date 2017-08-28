@@ -9,9 +9,9 @@
 #@Dir3=("NoRotate","Rotate_X","Rotate_XY");
 @Dir3=("Rotate_X","Rotate_XY");
 #@Dir3=("Rotate_X");
-$XYZ="4_4_4";
+$XYZ="5_5_4";
 $TLong="12";
-$Delete="-1_1_1";
+$Delete="1_1";
 $Dir_code=`pwd`;
 
 
@@ -39,9 +39,10 @@ for($a=0;$a<$NDir1;$a+=1){
   }
 }
 for($i=0;$i<$TDir;$i+=1){
+  system "cp *.sh *.py *.pl *.mdp @Prex[$i]";
   chdir @Prex[$i];
   system "perl main.pl $XYZ $TLong $Delete @WallGro[$i] @WallTop[$i] @IonGro[$i] @IonTop[$i]";                  
-  system "rm -f main.pl pretreat.sh function.sh build_electrode.sh tune_ion.sh scale_ion.sh combine.sh CalDelNum.py CombineGro.py DelMole3.py GetMSDpara.py GetZmax.py SortMole.py scale-nvt.mdp tune_npt.mdp";  
+  system "rm -f bash.sh bash_multi.sh main.pl pretreat.sh function.sh build_electrode.sh tune_ion.sh scale_ion.sh combine.sh CalDelNum.py CombineGro.py DelMole3.py GetMSDpara.py GetZmax.py SortMole.py scale-nvt.mdp tune_npt.mdp";  
   chdir $Dir_code;
 }
 
