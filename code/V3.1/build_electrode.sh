@@ -21,6 +21,7 @@ if($BUILDELE==1){
     $temp_scale=$temp/$scale_size/@TempXYZ[$i+1]; #charge 100, charge the new gro X, Y size. 100 means %.2f
     @ScaleSize[$i]=$temp_scale;
   }
+  @ScaleSize[2]=1;
   system "GROMACSeditconf -f temp_out.gro -scale @ScaleSize[0] @ScaleSize[1] @ScaleSize[2] -o tempLeft.gro \n";
   @NewGroXYZ=split/\s+/, `tail -1 tempLeft.gro`; #Get the scaled box size: X, Y, Z
   system "rm -f temp_out.gro";
