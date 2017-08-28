@@ -16,7 +16,7 @@ elsif($Tnum2>$Tnum1*$Kmax){
   $Tnum3=$NewGroIonV*($Kmax-($Kmax-$Kmin)/2)/$Tnum2;
 }
 else{
-  $Tnum3=$Tnum2;
+  $Tnum3=$IonV;
 }
 
 ($TTop_Name,$TTop_Num,$TTop_Mass,$TTop_Top) = GetTopMSD($Ion_top);
@@ -26,7 +26,6 @@ $TStrMass=StrPara(@TTop_Mass);$TStrTop=StrPara(@TTop_Top);$TStrRatio=StrPara(@De
 my $temp=`cat tune_out`;
 @TDelNum=split/\s+/,$temp;
 system "rm -f tune_out";
- 
 if($DELETE==1){
   $TStrNum=StrPara(@TTop_Num);
   $TStrDel=StrPara(@TDelNum);
