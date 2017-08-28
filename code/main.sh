@@ -24,7 +24,7 @@ $Kmin=1.02; #the mimnium density of channel ion compare with bulk
 #Get the Input gri box size: X, Y, Z
 for ($i=0; $i<3; $i=$i+1){
     $temp = @WantedXYZ[$i]/@GroXYZ[$i+1];
-    @GroNum[$i] = int($temp);
+    @GroNum[$i] = int($temp+0.5);
     if (@GroNum[$i]<=0){
         @GroNum[$i]=1;
     }

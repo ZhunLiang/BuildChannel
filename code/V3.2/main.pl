@@ -17,7 +17,7 @@ $RUNBUILD=1;
 $GRO=1;
 $TOP=1;
 $DEL=1;
-$SAVETEMP=0;
+$SAVETEMP=1;
 
 ###############Initial#################
 $Python = "\\/opt\\/python\\/bin\\/python";
@@ -47,13 +47,13 @@ require('pretreat.sh');
 require('function.sh');
 
 ################Build electrode#############################
-#require('build_electrode.sh');
+require('build_electrode.sh');
 
 ################Tune Bulk Ion gro###########################
-#require('tune_ion.sh');
+require('tune_ion.sh');
 
 ################Scale Bulk Ion gro#########################
-#require('scale_ion.sh');
+require('scale_ion.sh');
 
 ################Combine gro and top. Delete files#######################
 require('combine.sh');
