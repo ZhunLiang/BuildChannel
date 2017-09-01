@@ -6,7 +6,7 @@
 #Get the Input gri box size: X, Y, Z
 for ($i=0; $i<3; $i=$i+1){
     $temp = @WantedXYZ[$i]/@GroXYZ[$i+1];
-    @GroNum[$i] = int($temp);
+    @GroNum[$i] = int($temp+0.5);
     if (@GroNum[$i]<=0){
         @GroNum[$i]=1;
     }
@@ -31,21 +31,21 @@ if($BUILDELE==1){
     @ScaleSize[$i]=$temp_scale;
   }
   #@ScaleSize[2]=1;
-  #print "@ScaleSize/n";
   system "GROMACSeditconf -f temp_out.gro -scale @ScaleSize[0] @ScaleSize[1] @ScaleSize[2] -o tempLeft.gro \n";
   @NewGroXYZ=split/\s+/, `tail -1 tempLeft.gro`; #Get the scaled box size: X, Y, Z
   system "rm -f temp_out.gro TempOut";
   #Get the scaled gro, the x,y,z is %.3f format
-  system "PYTHON GetZmax.py -i tempLeft.gro > LPyOut";
-  @ZLMaxMin= split/\s+/,`cat LPyOut`; #Get the LeftGro Zmax[0] and Zmin[1] 
-  #$BoxZ=$ChannelLong+@NewGroXYZ[3];
-  #$Ztrans=$ChannelLong/2-@NewGroXYZ[3]/2;
-  system "editconf -f tempLeft.gro -box @NewGroXYZ[1] @NewGroXYZ[2] $TotalZLong -c -o $WallGro";
+  $Ztrans=$TotalZLong/2-(@ZLMaxMin[1]+@ZLMaxMin[0])/2;
+  system "editconf -f tempLeft.gro -box @NewGroXYZ[1] @NewGroXYZ[2] $TotalZLong -c -o temp.gro";
+  system "PYTHON GetZmax.py -i temp.gro > LPyOut";
+  @ZLMaxMin= split/\s+/,`cat LPyOut`; #Get the LeftGro Zmax[0] and Zmin[1]
+  $Ztrans=$TotalZLong/2-(@ZLMaxMin[1]+@ZLMaxMin[0])/2;
+  system "editconf -f temp.gro -translate 0 0 $Ztrans -o $WallGro";
+  system "rm -f temp.gro";
   #Translate the left gro as right gro
   our $ChannelLong=$TotalZLong-(@ZLMaxMin[0]-@ZLMaxMin[1]);
   @SingleWallNum=GetTopNum($Wall_top);
   ChangeTop($Wall_top,$WallTop,1,@GroNum);
   system "rm -f tempLeft.gro LPyOut";
-  #print "$ChannelLong\n";
 }
 1;
