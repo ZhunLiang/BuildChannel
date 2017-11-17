@@ -12,7 +12,6 @@ $Vc=@ChannelXYZ[1]*@ChannelXYZ[2]*@ChannelXYZ[3];
 $Vb=@IonXYZ[1]*@IonXYZ[2]*@IonXYZ[3];
 $InitNum=$Vc/$Vb;
 $NeedNum=int($InitNum+0.999999);
-@TuneNumXYZ;
 
 for($i=0;$i<2;$i=$i+1){
     if(@InitNumXYZ[$i]<1){@TuneNumXYZ[$i]=1;}
@@ -31,6 +30,14 @@ for($i=0;$i<3;$i=$i+1){
     @ScaleXYZ[$i]=(@ChannelXYZ[$i+1]-0.2)/@TuneNumXYZ[$i];
     @ScaleRatio[$i]=@ScaleXYZ[$i]/@IonXYZ[$i+1];
 }
+
+if(@ScaleXYZ[0]<3 || @ScaleXYZ[1]<3 || @ScaleXYZ[2]<3){
+    print "#--------------ERROR-------------#";
+    print "#- The scaled gro is too small. -#";
+    print "#---------------END--------------#";
+    exit();
+}
+
 for($i=0;$i<3;$i=$i+1){
     if(@ScaleRatio[$i]<1){
         $temp=log (@ScaleRatio[$i])/log (0.95);
@@ -73,12 +80,12 @@ if($RUNSCALE==1){
 
 if($RUNBUILD==1){
     system "genconf -f scale.gro -nbox @TuneNumXYZ[0] @TuneNumXYZ[1] @TuneNumXYZ[2] -o IonChannel.gro";
-    print "@TuneNumXYZ\n";
+    #print "@TuneNumXYZ\n";
     ChangeTop("scale.top","IonChannel.top",1,@TuneNumXYZ);
     ($STop_Name,$STop_Num,$STop_Mass,$STop_Top) = GetTopMSD("scale.top");
     @STop_Name=@$STop_Name;@STop_Num=@$STop_Num;@STop_Mass=@$STop_Mass;@STop_Top=@$STop_Top;
     $SStrTop=StrPara(@STop_Top);$SStrNum=StrPara(@STop_Num);
-    print "$SStrTop\n$SStrNum\n$TuneTotalNum\n";
+    #print "$SStrTop\n$SStrNum\n$TuneTotalNum\n";
     system "PYTHON SortMole.py -i IonChannel.gro -a $SStrNum -n $SStrTop -t $TuneTotalNum -o IonChannel2.gro";
     system "mv IonChannel2.gro IonChannel.gro";
     system "mkdir build_ion/";

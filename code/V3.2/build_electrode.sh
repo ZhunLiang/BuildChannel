@@ -7,10 +7,15 @@
 for ($i=0; $i<3; $i=$i+1){
     $temp = @WantedXYZ[$i]/@GroXYZ[$i+1];
     @GroNum[$i] = int($temp+0.5);
+    $temp_xyz=@GroXYZ[$i+1]*@GroNum[$i];
+    if($temp_xyz<4.5){
+        @GroNum[$i]=@GroNum[$i]+1;
+    }
     if (@GroNum[$i]<=0){
         @GroNum[$i]=1;
     }
 }
+
 #Get the needed nbox number
 if($BUILDELE==1){
   system "GROMACSgenconf -f $Wall_gro -nbox @GroNum[0] @GroNum[1] @GroNum[2] -o temp_out.gro";
