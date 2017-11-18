@@ -21,7 +21,7 @@ for($i=0;$i<2;$i=$i+1){
 @TuneNumXYZ[2]=$NeedNum/@TuneNumXYZ[0]/@TuneNumXYZ[1];
 $Err=@TuneNumXYZ[2]-int(@TuneNumXYZ[2]);
 if($Err!=0){
-    @TuneNumXYZ[2]=int(@TuneNumXYZ[2])+1;
+    @TuneNumXYZ[2]=int(@TuneNumXYZ[2])+$Err;
 }
 
 $TuneTotalNum=@TuneNumXYZ[0]*@TuneNumXYZ[1]*@TuneNumXYZ[2];

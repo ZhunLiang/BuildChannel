@@ -43,3 +43,7 @@ foreach $gro_file(@Gro_Files){
   system "mv $gro_file Channel.* temp_out/ $gro_name";
   system "cp MSD_charge_para.dat $gro_name";
 }
+
+system "rm -f bash.sh bash_multi.sh bash_MoS2.sh main.pl pretreat.sh function.sh build_electrode.sh tune_ion.sh scale_ion.sh combine.sh CalDelNum.py CombineGro.py DelMole3.py GetMSDpara.py GetZmax.py SortMole.py scale-nvt.mdp tune_npt.mdp";
+
+

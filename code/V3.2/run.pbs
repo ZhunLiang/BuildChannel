@@ -1,0 +1,9 @@
+#!/bin/bash
+#PBS -q NICEshort
+#PBS -N EMIBF4-test
+#PBS -j oe
+#PBS -l nodes=1:ppn=32
+
+cd $PBS_O_WORKDIR
+source ~/.bashrc
+perl bash_MoS2.sh /home/lz/lz/Simulation/MoS2/build/1T-MoS2/ 5_5_6 20 1_1 1T_MoS2_ 1T-MoS2.top EMIBF4.gro EMIBF4.top
