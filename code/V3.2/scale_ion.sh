@@ -3,7 +3,8 @@
 
 @ChannelXYZ=split/\s+/,`tail -1 $WallGro`;
 @ChannelXYZ[3]= $ChannelLong-0.2;
-@IonXYZ=split/\s+/,`tail -1 tune_end.gro`;
+#@IonXYZ=split/\s+/,`tail -1 tune_end.gro`;
+IonXYZ=split/\s+/,`tail -1 Ion.gro`;
 for($i=0;$i<3;$i=$i+1){
     @InitNumXYZ[$i]=@ChannelXYZ[$i+1]/@IonXYZ[$i+1];
 }
@@ -68,7 +69,8 @@ for($i=0;$i<$MaxTime;$i=$i+1){
 if($RUNSCALE==1){
   system "mkdir scale";
   system "cp *.itp scale-nvt.mdp scale/";
-  system "cp tune_end.top scale/scale.top;cp tune_end.gro scale/scale.gro";
+  #system "cp tune_end.top scale/scale.top;cp tune_end.gro scale/scale.gro";
+  system "cp Ion.top scale/scale.top;cp Ion.gro scale/scale.gro";
   chdir "scale/";
   for($i=0;$i<$MaxTime;$i=$i+1){    
     RunScale("scale.gro","scale.top",@ScaleValue[0+$i],@ScaleValue[$MaxTime+$i],@ScaleValue[$MaxTime*2+$i]);
