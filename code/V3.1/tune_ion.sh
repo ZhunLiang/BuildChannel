@@ -39,7 +39,8 @@ if($RUN==1){
   system "mkdir tune_bulk; cp *.itp tune_npt.mdp tune_bulk/; mv $tune_gro tune_bulk/;mv $tune_top tune_bulk/";
   chdir "tune_bulk/";
   system "GROMACSgrompp -f tune_npt.mdp -c $tune_gro -p $tune_top -o tune.tpr";
-  system "GROMACSmdrun -s tune.tpr -v -deffnm tune_run";
+  #system "GROMACSmdrun -s tune.tpr -v -deffnm tune_run";
+  system "GROMACSmdrun -s tune.tpr -v -deffnm tune_run -ntomp 32 -ntmpi 1";
   system "mv tune_run.gro tune_end.gro";
   system "echo 0 | GROMACStrjconv -f tune_run.gro -s tune.tpr -pbc mol -o tune_end.gro";
   system "mv tune_end.gro ../;mv $tune_top ../tune_end.top";

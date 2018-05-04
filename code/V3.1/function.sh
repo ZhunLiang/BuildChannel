@@ -89,7 +89,7 @@ sub RunScale{
   system "GROMACSeditconf -f $_[0] -scale $_[2] $_[3] $_[4] -o $_[0]";
   ####!!!!!!!!ATENSTION!!!!!!!!THE NEXT TWO LINE MAYBY WRONG !!!!#####
   system "GROMACSgrompp -f scale-nvt.mdp -c $_[0] -p $_[1] -o run.tpr";
-  system "GROMACSmdrun -s run.tpr -v -deffnm run -ntmpi 32 ";
+  system "GROMACSmdrun -s run.tpr -v -deffnm run -ntmpi 1 -ntomp 32 ";
   system "echo 0 | GROMACStrjconv -s run.tpr -f run.gro -pbc mol -o $_[0]";
 }
 
