@@ -67,9 +67,9 @@ sub TChangeTop{
   my $topnum=@TTop_Name;
   system "cp $_[0] $_[1]";
   for(my $i=0;$i<$topnum;$i+=1){
-    my $Ttemp_match="@TTopName[$i]\\s\\+\\([0-9]\\+\\)";
+    my $Ttemp_match="@TTop_Name[$i]\\s\\+\\([0-9]\\+\\)";
     my $Tnum=@TTop_Top[$i]-@TDelNum[$i];
-    my $Ttemp_re="@TTopName[$i]\\t$Tnum";
+    my $Ttemp_re="@TTop_Name[$i]\\t$Tnum";
     system "sed -i 's/$Ttemp_match/$Ttemp_re/g' $_[1]";
   }
 }
