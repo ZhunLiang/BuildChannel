@@ -18,7 +18,7 @@ Vw = options.wanted_v
 
 Mass = np.array([float(Mass.split()[i]) for i in range(len(Mass.split()))])
 Num = np.array([int(Num.split()[i]) for i in range(len(Num.split()))])
-Ration = np.array([int(Ration.split()[i]) for i in range(len(Ration.split()))])
+Ration = np.array([float(Ration.split()[i]) for i in range(len(Ration.split()))])
 
 
 Delete_Type = Ration>0
