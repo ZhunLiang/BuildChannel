@@ -19,8 +19,9 @@ our $OutGro="Channel.gro";
 our $OutTop="Channel.top";
 our $channel_name="MILTIION";
 our $scale_size=100; #scale size means the decimal point number, 100 means %.2f, 1000 means %.3f
-our $Kmax=1.3; #the maxmiun density of channel ion compare with bulk
-our $Kmin=1.2; #the mimnium density of channel ion compare with bulk
+our $Kmax=1.5; #the maxmiun density of channel ion compare with bulk
+our $Kmin=1.3; #the mimnium density of channel ion compare with bulk
+our $SLIT_RATIO = 0.7; #slit hight/box length; possible value, need careful tune 
 
 #@WantedXYZ= (5,5,-1);
 #$ChannelLong=8;
