@@ -1,7 +1,11 @@
 #!/bin/perl
 @IonBoxXYZ=split/\s+/,`tail -1 $Ion_gro`;
-$NewGroIonV=@NewGroXYZ[1]*@NewGroXYZ[2]*($ChannelLong-0.2); #0.2 means the surface 0.1 nm each side don't have ion
+#$NewGroIonV=@NewGroXYZ[1]*@NewGroXYZ[2]*($ChannelLong-0.2); #0.2 means the surface 0.1 nm each side don't have ion
+my $Slit_V = ($TotalZLong-$ChannelLong)*@NewGroXYZ[1]*@NewGroXYZ[2]*$SLIT_RATIO;  #slit volumn, useful when the electrode is long and D_slit is large
+$NewGroIonV=@NewGroXYZ[1]*@NewGroXYZ[2]*($ChannelLong-0.2)+$Slit_V; #0.2 means the surface 0.1 nm each side don't have ion
 $IonV=@IonBoxXYZ[1]*@IonBoxXYZ[2]*@IonBoxXYZ[3];
+
+#print("$ChannelLong\t@NewGroXYZ[3]\t$Slit_V\t$NewGroTonV\t$IonV\n");
 
 my $tune_gro="tune.gro";
 my $tune_top="tune.top";
@@ -18,6 +22,9 @@ elsif($Tnum2>$Tnum1*$Kmax){
 else{
   $Tnum3=$IonV;
 }
+
+$NEED_NUM=$Tnum2;
+#print("$Tnum3\t$Tnum2\n");
 
 ($TTop_Name,$TTop_Num,$TTop_Mass,$TTop_Top) = GetTopMSD($Ion_top);
 @TTop_Name=@$TTop_Name;@TTop_Num=@$TTop_Num;@TTop_Mass=@$TTop_Mass;@TTop_Top=@$TTop_Top;
