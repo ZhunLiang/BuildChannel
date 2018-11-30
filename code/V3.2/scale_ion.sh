@@ -4,7 +4,7 @@
 @ChannelXYZ=split/\s+/,`tail -1 $WallGro`;
 @ChannelXYZ[3]= $ChannelLong-0.2;
 #@IonXYZ=split/\s+/,`tail -1 tune_end.gro`;
-IonXYZ=split/\s+/,`tail -1 Ion.gro`;
+@IonXYZ=split/\s+/,`tail -1 $Ion_gro`;
 for($i=0;$i<3;$i=$i+1){
     @InitNumXYZ[$i]=@ChannelXYZ[$i+1]/@IonXYZ[$i+1];
 }
@@ -12,7 +12,9 @@ for($i=0;$i<3;$i=$i+1){
 $Vc=@ChannelXYZ[1]*@ChannelXYZ[2]*@ChannelXYZ[3];
 $Vb=@IonXYZ[1]*@IonXYZ[2]*@IonXYZ[3];
 $InitNum=$Vc/$Vb;
-$NeedNum=int($InitNum+0.999999);
+#$NeedNum=int($InitNum+0.999999);
+$NeedNum=$NEED_NUM;  
+#$NEED_NUM was newly defined in tune_ion.sh, which is reasonable, because we choose the need num in tune_ion.sh and tune the bulk with this value, so it should not be calculated again
 
 for($i=0;$i<2;$i=$i+1){
     if(@InitNumXYZ[$i]<1){@TuneNumXYZ[$i]=1;}
@@ -32,12 +34,12 @@ for($i=0;$i<3;$i=$i+1){
     @ScaleRatio[$i]=@ScaleXYZ[$i]/@IonXYZ[$i+1];
 }
 
-if(@ScaleXYZ[0]<3 || @ScaleXYZ[1]<3 || @ScaleXYZ[2]<3){
-    print "#--------------ERROR-------------#";
-    print "#- The scaled gro is too small. -#";
-    print "#---------------END--------------#";
-    exit();
-}
+#if(@ScaleXYZ[0]<3 || @ScaleXYZ[1]<3 || @ScaleXYZ[2]<3){
+#    print "#--------------ERROR-------------#";
+#    print "#- The scaled gro is too small. -#";
+#    print "#---------------END--------------#";
+#    exit();
+#}
 
 for($i=0;$i<3;$i=$i+1){
     if(@ScaleRatio[$i]<1){
@@ -70,7 +72,7 @@ if($RUNSCALE==1){
   system "mkdir scale";
   system "cp *.itp scale-nvt.mdp scale/";
   #system "cp tune_end.top scale/scale.top;cp tune_end.gro scale/scale.gro";
-  system "cp Ion.top scale/scale.top;cp Ion.gro scale/scale.gro";
+  system "cp $Ion_top scale/scale.top;cp $Ion_gro scale/scale.gro";
   chdir "scale/";
   for($i=0;$i<$MaxTime;$i=$i+1){    
     RunScale("scale.gro","scale.top",@ScaleValue[0+$i],@ScaleValue[$MaxTime+$i],@ScaleValue[$MaxTime*2+$i]);
@@ -93,9 +95,13 @@ if($RUNBUILD==1){
     system "mkdir build_ion/";
     system "cp *.itp IonChannel*.gro IonChannel.top scale-nvt.mdp build_ion/";
     chdir "build_ion/";
+    #the next maybe change, depend on the case!!!
     RunScale("IonChannel.gro","IonChannel.top",1,1,1);
     RunScale("IonChannel.gro","IonChannel.top",0.97,0.97,0.95);
     RunScale("IonChannel.gro","IonChannel.top",0.97,0.97,0.95);
+    RunScale("IonChannel.gro","IonChannel.top",0.98,0.98,0.95);
+    RunScale("IonChannel.gro","IonChannel.top",1,1,0.97);
+    RunScale("IonChannel.gro","IonChannel.top",1,1,0.97);
     system "mv IonChannel.gro ../;mv IonChannel.top ../";
     chdir "../";
     system "rm -rf build_ion/";
