@@ -96,12 +96,13 @@ if($RUNBUILD==1){
     system "cp *.itp IonChannel*.gro IonChannel.top scale-nvt.mdp build_ion/";
     chdir "build_ion/";
     #the next maybe change, depend on the case!!!
+    #scale too much or too little all may cause wrong, be careful
     RunScale("IonChannel.gro","IonChannel.top",1,1,1);
     RunScale("IonChannel.gro","IonChannel.top",0.97,0.97,0.95);
-    RunScale("IonChannel.gro","IonChannel.top",0.97,0.97,0.95);
-    RunScale("IonChannel.gro","IonChannel.top",0.98,0.98,0.95);
-    RunScale("IonChannel.gro","IonChannel.top",1,1,0.97);
-    RunScale("IonChannel.gro","IonChannel.top",1,1,0.97);
+    #RunScale("IonChannel.gro","IonChannel.top",0.97,0.97,0.95);
+    #RunScale("IonChannel.gro","IonChannel.top",0.98,0.98,0.95);
+    #RunScale("IonChannel.gro","IonChannel.top",1,1,0.97);
+    #RunScale("IonChannel.gro","IonChannel.top",1,1,0.97);
     system "mv IonChannel.gro ../;mv IonChannel.top ../";
     chdir "../";
     system "rm -rf build_ion/";

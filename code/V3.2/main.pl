@@ -53,6 +53,8 @@ require('build_electrode.sh');
 require('tune_ion.sh');
 
 ################Scale Bulk Ion gro#########################
+#---scale too much when RUNBUILD (see scale_ion.sh) maybe wrong
+#---it could because scale too much or few(ion atom near the electrode)
 require('scale_ion.sh');
 
 ################Combine gro and top. Delete files#######################
